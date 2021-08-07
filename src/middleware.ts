@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
-async function EnsuredAuthenticated(request: Request, response: Response, next: NextFunction) {
+async function Authenticate(request: Request, response: Response, next: NextFunction) {
   const token = request.headers.authorization;
 
   if (!token) {
-    return response.status(401).send();
+    return response.status(401).json({ error: "Token não encontrado" });
   }
 
   const [, user] = token.split(" ");
@@ -13,7 +13,7 @@ async function EnsuredAuthenticated(request: Request, response: Response, next: 
     return next();
   }
 
-  return response.status(401).send();
+  return response.status(401).json({ error: "Você não possui permissão" });
 }
 
-export { EnsuredAuthenticated };
+export { Authenticate };
