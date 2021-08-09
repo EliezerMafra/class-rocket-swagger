@@ -1,0 +1,176 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de manipulação de produtos",
+    "description": "Essa API tem como objetivo a manipulação dos produtos",
+    "termsOfService": "http://localhost:3333/terms",
+    "contact": { "email": "deibsoncogotrabalho@outlook.com" },
+    "license": { "name": "MIT License", "url": "https://github.com/deibsoncogo/Swagger/blob/master/LICENSE" },
+    "version": "1.0.0"
+  },
+  "servers": [{ "description": "API de test", "url": "http://localhost:3333" }],
+  "paths": {
+    "/product": {
+      "post": {
+        "tags": ["Product"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Cadastrar um produto",
+        "description": "Essa rota será responsável por cadastrar um novo produto",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/product" },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Teclado sem fio",
+                    "price": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": { "description": "Token não encontrado/Você não possui permissão" },
+          "400": { "description": "Já existe um produto com este nome" },
+          "200": {
+            "description": "Produto cadastrado",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "$ref": "#/components/schemas/product" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/all": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Listar os produtos",
+        "description": "Esta rota é responsável por mostrar todos os produtos cadastrado",
+        "responses": {
+          "400": { "description": "Não existe produto cadastrado" },
+          "200": {
+            "description": "Produtos cadastrado",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/product" }}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/one": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Buscar produto pelo nome",
+        "description": "Esta rota é responsável por buscar produtos com o nome desejado",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "description": "Nome do produto",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": { "description": "Produto não encontrado" },
+          "200": {
+            "description": "Produto encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/product" }}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{code}": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Buscar produto pelo código",
+        "description": "Está rota é responsável de encontrar um produto pelo seu código",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Código do produto",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": { "description": "Produto não encontrado" },
+          "200": {
+            "description": "Produto encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "$ref": "#/components/schemas/product" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Product"],
+        "security": [{ "bearerAuth": [] }],
+        "summary": "Alterar produto pelo código",
+        "description": "Está rota consegue realizar alterações do produto no campo nome e valor a partir do código",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Código do produto",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/product" },
+              "examples": {
+                "product": {
+                  "value": {
+                    "name": "Teclado com fio RGB",
+                    "price": 852
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": { "description": "Token não encontrado/Você não possui permissão" },
+          "400": { "description": "Produto não encontrado/Já existe um produto com este nome" },
+          "201": {
+            "description": "Produto alterado",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "$ref": "#/components/schemas/product" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "product": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "code": { "type": "number" },
+          "name": { "type": "string" },
+          "price": { "type": "number" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  }
+}
